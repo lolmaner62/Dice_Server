@@ -2,7 +2,7 @@
 {
     public class Client
     {
-        string Username;
+        public string Username;
         Guid ID;
 
         public Client(string username)
