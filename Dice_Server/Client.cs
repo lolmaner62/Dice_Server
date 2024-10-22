@@ -3,12 +3,11 @@
     public class Client
     {
         public string Username;
-        Guid ID;
-
-        public Client(string username)
+        public string ConID;
+        public Client(string username, string _conid)
         {
             Username = username;
-            ID = Guid.NewGuid();
+            ConID = _conid;
         }
 
 

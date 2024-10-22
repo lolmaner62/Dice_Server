@@ -7,7 +7,7 @@ namespace Dice_Server
 {
     public  class GameHub : Hub
     {
-        
+        private Client? _client;
         public async Task<bool> TestConnection()
         {
             return await Task<bool>.Run(() =>
@@ -63,7 +63,8 @@ namespace Dice_Server
                     cmd.Fill(table);
                     if (table.Rows.Count == 1)
                     {
-                        Variables.clients.Add(new Client(user));
+                        _client = new Client(user, Context.ConnectionId);
+                        Variables.clients.Add(_client);
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"{user} Sucessfully logged in!");
                         Console.ForegroundColor = ConsoleColor.White;
@@ -85,7 +86,25 @@ namespace Dice_Server
             });
 
         }
-        
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            string connectionId = Context.ConnectionId;
+            var client = Variables.clients.Find(c => c.ConID == connectionId);
+
+            if (client != null)
+            {
+                Console.WriteLine($"[{client.Username}] has disconnected");
+            }
+            else
+            {
+                Console.WriteLine($"[{connectionId}] has disconnected");
+            }
+            Variables.clients.RemoveAll(c => c.ConID == connectionId);
+            
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
 
 
     }
